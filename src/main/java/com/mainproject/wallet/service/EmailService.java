@@ -1,5 +1,6 @@
 package com.mainproject.wallet.service;
 
+import com.mainproject.wallet.exception.WalletException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +43,14 @@ public class EmailService {
                 "<h2>Tuple Pay</h2>" +
                 "</div>" +
                 "<h1>Your Wallet Has Been Recharged!</h1>" +
-                "<p>Your wallet has been recharged with <strong>₹" + amount + "</strong>.</p>" +
-                "<p>You have earned a cashback of <strong>₹" + cashback + "</strong>.</p>" +
+                "<p>Your wallet has been recharged with <strong>₹" + amount + "</strong>.</p>";
+
+                if(cashback>0)
+                {
+                    content+="<p>You have earned a cashback of <strong>₹" + cashback + "</strong>.</p>";
+                }
+
+                content+=
                 "<p>Thank you for using our service!</p>" +
                 "</div>" +
                 "</body>" +

@@ -1,6 +1,7 @@
 package com.mainproject.wallet.service;
 
 import com.mainproject.wallet.dto.RechargeResponseDTO;
+import com.mainproject.wallet.exception.UserNotFoundException;
 import com.mainproject.wallet.exception.WalletException;
 import com.mainproject.wallet.model.User;
 import com.mainproject.wallet.repository.UserRepository;
@@ -93,11 +94,11 @@ class WalletServiceTest {
     }
 
     @Test
-    void testTransfer_UserNotFound_throwsWalletException() {
+    void testTransfer_UserNotFound_throwsUserNotFoundException() {
         when(userService.getUserIdByUsername(USERNAME)).thenReturn(USER_ID);
         when(userService.getUserIdByUsername(TO_USERNAME)).thenReturn(null);
 
-        WalletException exception = assertThrows(WalletException.class, () -> walletService.transfer(USERNAME, TO_USERNAME, 50.0));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> walletService.transfer(USERNAME, TO_USERNAME, 50.0));
         assertEquals("Wallet not found for username " + TO_USERNAME, exception.getMessage());
     }
 
@@ -127,10 +128,10 @@ class WalletServiceTest {
     }
 
     @Test
-    void testViewStatement_UserNotFound_throwsWalletException() {
+    void testViewStatement_UserNotFound_throwsUserNotFoundException() {
         when(userService.getUserIdByUsername(USERNAME)).thenReturn(null);
 
-        WalletException exception = assertThrows(WalletException.class, () -> walletService.viewStatement(USERNAME));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> walletService.viewStatement(USERNAME));
         assertEquals("No user found for username: " + USERNAME, exception.getMessage());
     }
 

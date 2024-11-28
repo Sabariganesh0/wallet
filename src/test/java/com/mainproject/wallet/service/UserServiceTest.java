@@ -2,6 +2,7 @@ package com.mainproject.wallet.service.impl;
 
 import com.mainproject.wallet.dto.LoginDTO;
 import com.mainproject.wallet.dto.RegisterDTO;
+import com.mainproject.wallet.exception.AuthException;
 import com.mainproject.wallet.model.User;
 import com.mainproject.wallet.repository.UserRepository;
 import com.mainproject.wallet.service.UserService;
@@ -76,21 +77,21 @@ class UserServiceTest {
     }
 
     @Test
-    void testRegister_UsernameAndEmailExists_throwsIllegalArgumentException() {
+    void testRegister_UsernameAndEmailExists_throwsAuthException() {
         when(userRepository.findByUsernameIgnoreCase(USERNAME)).thenReturn(new User());
         when(userRepository.findByEmail(EMAIL)).thenReturn(new User());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.register(registerDTO));
+        AuthException exception = assertThrows(AuthException.class, () -> userService.register(registerDTO));
         assertEquals("Username already exists", exception.getMessage());
     }
 
     @Test
-    void testLogin_InvalidPassword_throwsIllegalArgumentException() {
+    void testLogin_InvalidPassword_throwsAuthException() {
         when(userRepository.findByUsernameIgnoreCase(USERNAME)).thenReturn(user);
         when(passwordEncoder.matches("wrongPassword", user.getPassword())).thenReturn(false);
 
         loginDTO.setPassword("wrongPassword");
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.login(loginDTO));
+        AuthException exception = assertThrows(AuthException.class, () -> userService.login(loginDTO));
         assertEquals("Invalid Credentials", exception.getMessage());
     }
 
@@ -105,11 +106,11 @@ class UserServiceTest {
     }
 
     @Test
-    void testLogin_NullValues_throwsIllegalArgumentException() {
+    void testLogin_NullValues_throwsAuthException() {
         loginDTO.setUsername(null);
         loginDTO.setPassword(null);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.login(loginDTO));
+        AuthException exception = assertThrows(AuthException.class, () -> userService.login(loginDTO));
         assertEquals("Invalid Credentials", exception.getMessage());
     }
 
@@ -150,11 +151,11 @@ class UserServiceTest {
     }
 
     @Test
-    void testRegister_EmailExists_throwsIllegalArgumentException() {
+    void testRegister_EmailExists_throwsAuthException() {
         when(userRepository.findByUsernameIgnoreCase(USERNAME)).thenReturn(null);
         when(userRepository.findByEmail(EMAIL)).thenReturn(new User());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.register(registerDTO));
+        AuthException exception = assertThrows(AuthException.class, () -> userService.register(registerDTO));
         assertEquals("Email already exists", exception.getMessage());
     }
 

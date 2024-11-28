@@ -3,6 +3,7 @@ package com.mainproject.wallet.service;
 import com.mainproject.wallet.constant.TransactionENUM;
 import com.mainproject.wallet.dto.RechargeResponseDTO;
 import com.mainproject.wallet.dto.TransactionDTO;
+import com.mainproject.wallet.exception.UserNotFoundException;
 import com.mainproject.wallet.exception.WalletException;
 import com.mainproject.wallet.model.User;
 import com.mainproject.wallet.repository.UserRepository;
@@ -97,7 +98,7 @@ public class WalletService {
         String toUserId = userService.getUserIdByUsername(toUsername);
 
         if (fromUserId == null || toUserId == null) {
-            throw new WalletException("Wallet not found for username " + toUsername);
+            throw new UserNotFoundException("Wallet not found for username " + toUsername);
         }
 
         User fromUser = userRepository.findById(fromUserId).orElseThrow(() -> new WalletException("User not found for userId: " + fromUserId));
@@ -123,7 +124,6 @@ public class WalletService {
             transactionService.recordTransaction(fromUsername, amount, TransactionENUM.SENT, toUserId, toUsername, 0);
             TransactionDTO transactionDTO = transactionService.recordTransaction(fromUsername, amount, TransactionENUM.RECEIVED, toUserId, toUsername, 0);
             log.info("Transaction recorded for transfer: {}", transactionDTO);
-//            throw new RuntimeException("custom exception");
             return toUser;
         }
 
@@ -133,7 +133,7 @@ public class WalletService {
     public User viewStatement(String username) {
         String userId = userService.getUserIdByUsername(username);
         if (userId == null) {
-            throw new WalletException("No user found for username: " + username);
+            throw new UserNotFoundException("No user found for username: " + username);
         }
 
         log.info("Retrieving statement for username: {}", username);

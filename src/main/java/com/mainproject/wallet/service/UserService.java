@@ -2,6 +2,7 @@ package com.mainproject.wallet.service;
 
 import com.mainproject.wallet.dto.LoginDTO;
 import com.mainproject.wallet.dto.RegisterDTO;
+import com.mainproject.wallet.exception.AuthException;
 import com.mainproject.wallet.mapper.UserMapper;
 import com.mainproject.wallet.model.User;
 import com.mainproject.wallet.repository.UserRepository;
@@ -26,10 +27,10 @@ public class UserService {
 
         // Check for existing user
         if (userRepository.findByUsernameIgnoreCase(registerDTO.getUsername()) != null) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new AuthException("Username already exists");
         }
         if (userRepository.findByEmail(registerDTO.getEmail()) != null) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new AuthException("Email already exists");
         }
 
         // Encrypt password and save user
@@ -49,7 +50,7 @@ public class UserService {
         if (user != null && passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             return user;
         }
-        throw new IllegalArgumentException("Invalid Credentials");
+        throw new AuthException("Invalid Credentials");
     }
 
     public String getUserIdByUsername(String username) {
